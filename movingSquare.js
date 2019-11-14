@@ -1,5 +1,6 @@
 /*
 Gabriel Paiva Sousa - 2019/11/08
+Test for:
 - Makes a (red) square circle around a bigger (green) square
 - Implements buttons to:
     - Start/Stop the circling movement
@@ -7,14 +8,14 @@ Gabriel Paiva Sousa - 2019/11/08
     - Mode of increasing/deacreasing the speed: pixels or period
 */
 
-//Assigns box Object to the Moving Square Object
-Object.assign(boxRef, box);
 
 //BACKGROUND OBJECT REFERENCE
-var back = document.getElementById("back");
-
+var back = document.getElementById("background");
 //MOVING SQUARE OBJECT REFERENCE
 var boxRef = document.getElementById("animate");
+boxRef.style.left = 0;
+boxRef.style.top = 0;
+//BOX OBJECT - to be assigned to boxRef
 var box = {
     //inital square position
     x: 0,
@@ -22,61 +23,138 @@ var box = {
     //horizontal and vertical path dimensions (pixels)
     xpath: back.offsetWidth - boxRef.offsetWidth,
     ypath: back.offsetHeight - boxRef.offsetHeight,
+    
     //box status for movement condition
     status: false,
     //initial step in pixels
-    step: 1,
+    step: 2,
     //initial period in ms
     period: 20,
-    //rep variable to control movement through interval repetition
-    rep: 0,
-    //control method//
-    control: function () {
-        console.log(this);
-        if (this.state == false){
-            //sets interval for move() function
-            this.rep = setInterval(this.move, this.period.call(box));
-            play.startstop;
-            this.state = true;
+    
+    //MOVE METHOD
+    move: function () {
+        if (mode.clock){
+            //ClockWise movement
+            if (box.x<box.xpath && box.y==0){
+                box.x += box.step;
+                if (box.x > box.xpath){
+                    box.x = box.xpath;
+                }
+                boxRef.style.left = box.x + "px";
+            } else if (box.x==box.xpath && box.y<box.ypath){
+                box.y += box.step;
+                if (box.y > box.ypath){
+                    box.y = box.ypath;
+                }
+                boxRef.style.top = box.y + "px";
+            } else if (box.x>0 && box.y==box.ypath){
+                box.x -= box.step;
+                if (box.x < 0){
+                    box.x = 0;
+                }
+                boxRef.style.left = box.x + "px";
+            } else if (box.x==0 && box.y>0){
+                box.y -= box.step;
+                if (box.y < 0){
+                    box.y = 0;
+                }
+                boxRef.style.top = box.y + "px";
+            }
         } else {
-            clearInterval(this.rep);
-            play.startstop;
-            this.rep = 0;
-            this.state = false;
+            //CounterClockWise movement
+            if (box.x==0 && box.y<box.ypath){
+                box.y += box.step;
+                if (box.y > box.ypath){
+                    box.y = box.ypath;
+                }
+                boxRef.style.top = box.y + "px";
+            } else if (box.x<box.xpath && box.y==box.ypath){
+                box.x += box.step;
+                if (box.x > box.xpath){
+                    box.x = box.xpath;
+                }
+                boxRef.style.left = box.x + "px";
+            } else if (box.x==box.xpath && box.y>0){
+                box.y -= box.step;
+                if (box.y < 0){
+                    box.y = 0;
+                }
+                boxRef.style.top = box.y + "px";
+            } else if (box.x>0 && box.y==0){
+                box.x -= box.step;
+                if (box.x < 0){
+                    box.x = 0;
+                }
+                boxRef.style.left = box.x + "px";
+            }
+        }
+        
+    },
+    
+    //CONTROL METHOD
+    control: function () {
+        if (box.status == false){
+            //sets interval for move() function
+            box.rep = setInterval(box.move, box.period);
+            box.status = true;
+        } else {
+            clearInterval(box.rep);
+            box.rep = 0;
+            box.status = false;
         }
     },
-    //movement method//
-    move: function () {
-        if (this.x<this.xpath && this.y==0) {
-            this.x += this.step;
-            this.style.left = this.x + "px";
-        } else if (this.x==this.xpath && this.y<this.ypath) {
-            this.y += this.step;
-            this.style.top = this.y + "px";
-        } else if (this.y==this.ypath && this.x>0) {
-            this.x -= this.step;
-            this.style.left = this.x + "px";
-        } else if (this.x==0 && this.y>0) {
-            this.y -= this.step;
-            this.style.top = this.y + "px";
-        }
-    }
-}
+};
 
 ///////BUTTONS/////
-//Start/Stop OBJECT REFERENCE
+//START/STOP//
+//OBJECT REFERENCE
 var buttonRef = document.getElementById("start");
+//TO-BE-ASSIGNED OBJECT
 var play = {
-    status: "Start",
+    repeat: 0,
     onclick: function () {
-        var tt = setInterval(box.move);
-    },
-    startstop: function () {
-        if (this.status == "Start"){
-            this.status = "Stop";
+        if (!box.status){
+            buttonRef.innerHTML = "Stop";
         } else {
-            this.status = "Start";
+            buttonRef.innerHTML = "Start";
         }
-        this.innerHTML = this.status;
+        box.control();
     }
-}
+};
+//Assigns play{} to buttonRef{}
+Object.assign(buttonRef, play);
+
+//MINUS BUTTON OBJECT REFERENCE//
+var minusRef = document.getElementById("minus");
+//onclick method
+minusRef.onclick = function() {
+    box.step /= 2;
+};
+
+//PLUS BUTTON OBJECT REFERENCE//
+var plusRef = document.getElementById("plus");
+//onclick method
+plusRef.onclick = function() {
+    box.step *= 2;
+};
+
+
+//MODE BUTTON//
+//OBJECT REFERENCE//
+var modeRef = document.getElementById("mode");
+//Mode Status (ClockWise/Counter) text Object
+var modeStatus = document.getElementById("modeStatus");
+//TO-BE-ASSINED OBJECT
+var mode = {
+    clock: true,
+    onclick: function () {
+        if (mode.clock){
+            modeStatus.innerHTML = "Counter";
+            mode.clock = false;
+        } else {
+            modeStatus.innerHTML = "ClockWise";
+            mode.clock = true;
+        }
+    }
+};
+Object.assign(modeRef, mode);
