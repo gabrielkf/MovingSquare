@@ -1,0 +1,51 @@
+h2 {
+	color: green;
+
+	/*shadow input: x, y, R, color*/
+	text-shadow: -2px -1px 3px red;
+}
+
+p.a  {
+	text-transform: capitalize;
+}
+p.b  {
+	text-transform: uppercase;
+}
+p.c  {
+	text-transform: lowercase;
+}
+
+.quadrado {
+	background-color: black;
+	height: 200px;
+	width: 200px;
+}
+.absoluto {
+	position: absolute;
+	top: 20px;
+	right: 30px;
+}
+.relativo {
+	position: relative;
+}
+
+#mode {
+	margin-right: 5px;
+}
+
+button {
+	margin-bottom: 15px;
+    width: 1.5cm;
+}
+#background {
+	height: 200px;
+	width: 200px;
+	background-color: darkgreen;
+	position: relative;
+}
+#animate {
+	height: 30px;
+	width: 30px;
+	background-color: red;
+	position: absolute;
+}
